@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client</title>
+</head>
+<body id="container">
+</body>
+<script>
+    const cams = ["43334e5f-b980-4912-8ced-7b08a2f5a56e","c072f2f3-f0ff-4e72-bdfa-7cf6b05120f5"];
+    cams.forEach(cam=>{
+        var img = document.createElement('img');
+        document.getElementById('container').appendChild(img);
+        const WS_URL = 'ws:///192.168.86.54:8888/'+cam;
+        const ws = new WebSocket(WS_URL);
+        ws.onopen = () =>{
+        let urlObject;
+        console.log(`Connected to ${WS_URL}`);
+        ws.onmessage = message=>{
+            const arrayBuffer = message.data;
+            if(urlObject){
+                URL.revokeObjectURL(urlObject);
+            }
+            urlObject = URL.createObjectURL(new Blob([arrayBuffer]));
+            img.src = urlObject;
+        }
+        };
+    });
+</script>
+</html>
